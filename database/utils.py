@@ -5,12 +5,12 @@ from database.config import load_config
 import logging
 
 logger = logging.getLogger(__name__)
+
 logging.basicConfig(
-    filename="utils.log",
+    filename="database/utils.log",
     encoding="utf-8",
     level=logging.DEBUG,
 )
-
 
 def insert_user(username):
     """insert a new minecraft user into users table"""
@@ -19,7 +19,7 @@ def insert_user(username):
 
     q_insert_user = "INSERT INTO users(username) VALUES(%s)"
 
-    config = load_config()
+    config = load_config("/database")
 
     try:
         with psycopg2.connect(**config) as conn:
@@ -64,7 +64,7 @@ def search_tropical_fish_variant(
                                     WHERE not is_unique AND\
                                     (type_id = %s AND base_color_id = %s AND pattern_color_id = %s)"
 
-    config = load_config()
+    config = load_config("/database")
 
     try:
         with psycopg2.connect(**config) as conn:
@@ -165,7 +165,7 @@ def insert_tropical_fish_variant(
     q_insert_variant_tpfish = "INSERT INTO tropical_fishes_variants(is_unique, type_id, base_color_id, pattern_color_id)\
             VALUES(%s, %s, %s, %s) RETURNING id"
 
-    config = load_config()
+    config = load_config("/database")
 
     try:
         with psycopg2.connect(**config) as conn:
@@ -272,7 +272,7 @@ def owner_and_tropical_fish(
     # reference to the owner of the fish
     q_insert_fish_owner = "INSERT INTO owner_and_tropical_fishes(owner, tropical_fish) VALUES(%s, %s) RETURNING id"
 
-    config = load_config()
+    config = load_config("/database")
 
     try:
         with psycopg2.connect(**config) as conn:

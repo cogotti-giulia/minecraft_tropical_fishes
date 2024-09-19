@@ -5,7 +5,7 @@ Just a simple PostgreSQL database with python scripts to store minecraft tropica
 ## Instruction
 
 1. create a postgreSQL database
-2. create the file database.ini
+2. create the file database.ini inside the database folder
 
 ```
 [postgresql]
@@ -33,3 +33,5 @@ triglia
 pesce blocco-blu
 pesce pappagallo pinna gialla
 ```
+
+After insertion into the database the file will be cleaned to avoid inserting the same rows again and again.

@@ -1,5 +1,4 @@
 import psycopg2
-from database.config import load_config
 
 from database.utils import insert_user
 from database.utils import owner_and_tropical_fish
@@ -61,3 +60,5 @@ if __name__ == "__main__":
                         r
                     )
                 )
+
+    open(filename, 'w').close()

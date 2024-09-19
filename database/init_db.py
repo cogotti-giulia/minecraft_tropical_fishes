@@ -13,7 +13,7 @@ logging.basicConfig(filename="init_db.log", encoding="utf-8", level=logging.DEBU
 def insert_color(color, color_eng):
     """insert a new color into colors table"""
 
-    sql = "INSERT INTO colors(color, color_eng) VALUES(%s, %s)"
+    q_insert_user = "INSERT INTO colors(color, color_eng) VALUES(%s, %s)"
 
     config = load_config()
 
@@ -22,7 +22,7 @@ def insert_color(color, color_eng):
             with conn.cursor() as cur:
                 # execute the INSERT statement
                 cur.execute(
-                    sql,
+                    q_insert_user,
                     (
                         color,
                         color_eng,
@@ -32,7 +32,7 @@ def insert_color(color, color_eng):
                 # commit the changes to the database
                 conn.commit()
     except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
+        logger.debug(error)
 
 
 def insert_tropical_fish_type(type, type_eng):
@@ -63,7 +63,7 @@ def insert_tropical_fish_type(type, type_eng):
 def insert_tropical_fish_name(name, name_eng):
     """Insert unique 22 tropical fishes name type into the tropical_fishes_name table"""
 
-    sql = "INSERT INTO tropical_fishes_name(name, name_eng) VALUES(%s, %s) RETURNING *"
+    q_insert_tpfish_name = "INSERT INTO tropical_fishes_name(name, name_eng) VALUES(%s, %s) RETURNING *"
 
     config = load_config()
 
@@ -72,7 +72,7 @@ def insert_tropical_fish_name(name, name_eng):
             with conn.cursor() as cur:
                 # execute the INSERT statement
                 cur.execute(
-                    sql,
+                    q_insert_tpfish_name,
                     (
                         name,
                         name_eng,
