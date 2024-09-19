@@ -1,6 +1,6 @@
 import psycopg2
 import sys
-from config import load_config
+from database.config import load_config
 
 import logging
 
@@ -84,14 +84,11 @@ def search_tropical_fish_variant(
                     fishname_id = cur.fetchone()[0]
                     cur.execute(
                         q_get_id_from_tpfishvariant_22unique,
-                        (
-                            fishname_id,
-                        ),
+                        (fishname_id,),
                     )
 
                     if cur.rowcount != 0:
                         fishvariant_id = cur.fetchone()[0]
-                        print(fishvariant_id)
 
                 else:
                     cur.execute(
@@ -262,7 +259,8 @@ def owner_and_tropical_fish(
         fish_pattern_color,
     )
 
-    if fishvariant_id == 0:
+    # not found, insert a new variant of fish
+    if fishvariant_id == None:
         fishvariant_id = insert_tropical_fish_variant(
             is_unique,
             fish_name,
@@ -270,8 +268,6 @@ def owner_and_tropical_fish(
             fish_base_color,
             fish_pattern_color,
         )
-    else:
-        print(fishvariant_id)
 
     # reference to the owner of the fish
     q_insert_fish_owner = "INSERT INTO owner_and_tropical_fishes(owner, tropical_fish) VALUES(%s, %s) RETURNING id"

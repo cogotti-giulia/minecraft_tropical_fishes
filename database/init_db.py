@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(filename="init_db.log", encoding="utf-8", level=logging.DEBUG)
 
 
-# TODO: add type of the 22 uniquely-named tropical fish
+# TODO: add TYPE of the 22 uniquely-named tropical fish
 
 
 def insert_color(color, color_eng):

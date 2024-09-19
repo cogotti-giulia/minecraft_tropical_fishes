@@ -1,5 +1,8 @@
 import psycopg2
-from config import load_config
+from database.config import load_config
+
+from database.utils import insert_user
+from database.utils import owner_and_tropical_fish
 
 import sys
 import logging
@@ -7,11 +10,8 @@ import logging
 logger = logging.getLogger(__name__)
 logging.basicConfig(filename="insert.log", encoding="utf-8", level=logging.DEBUG)
 
-import utils 
-
-#TODO: sistemare le query con gli id
-#TODO: svuota file
-#TODO: vedere se posso scrivere su file da comando carpet
+# TODO: empty file after getting the fishes
+# TODO: find out if i can integrate this with carpet
 
 
 if __name__ == "__main__":
@@ -22,7 +22,7 @@ if __name__ == "__main__":
 
     # check if user already exists
     # otherwise add to db
-    utils.insert_user(username)
+    insert_user(username)
 
     r = 0
     with open(filename) as file:
@@ -35,10 +35,10 @@ if __name__ == "__main__":
             # print(words)
 
             if len(words) == 1:  # unique fishes
-                utils.owner_and_tropical_fish(True, username, words[0].lower())
+                owner_and_tropical_fish(True, username, words[0].lower())
             elif len(words) == 2:  # fish with same base and patter color
                 # words.append(words[-1])
-                utils.owner_and_tropical_fish(
+                owner_and_tropical_fish(
                     False,
                     username,
                     None,
@@ -47,7 +47,7 @@ if __name__ == "__main__":
                     words[1].lower(),
                 )
             elif len(words) == 3:  # default fishing name
-                utils.owner_and_tropical_fish(
+                owner_and_tropical_fish(
                     False,
                     username,
                     None,

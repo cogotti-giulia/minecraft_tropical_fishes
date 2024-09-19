@@ -6,3 +6,4 @@ test_giuxmirtiu.txt
 insert.log
 init_db.log
 insert_new_tropical_fish_variant.log
+database/utils.log
