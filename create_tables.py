@@ -41,7 +41,7 @@ def create_tables():
                 id SERIAL NOT NULL PRIMARY KEY,
                 is_unique BOOLEAN NOT NULL,
 
-                name_id INTEGER UNIQUE,
+                name_id INTEGER,
                 type_id INTEGER,
 
                 base_color_id  INTEGER,
