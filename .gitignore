@@ -1,0 +1,7 @@
+venv
+__pycache__
+database.ini
+test_chironed.txt
+test_giuxmirtiu.txt
+insert.log
+init_db.log
