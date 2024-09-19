@@ -2,6 +2,8 @@ import psycopg2
 from config import load_config
 
 
+#TODO: in tropical_fishes_variant table set as not null type and base and pattern color when added to the unique name fishes
+
 def create_tables():
     """create tables in postgreSQL db"""
     commands = (
@@ -39,11 +41,11 @@ def create_tables():
                 id SERIAL NOT NULL PRIMARY KEY,
                 is_unique BOOLEAN NOT NULL,
 
-                name_id INTEGER NOT NULL UNIQUE,
-                type_id INTEGER NOT NULL,
+                name_id INTEGER UNIQUE,
+                type_id INTEGER,
 
-                base_color_id  INTEGER NOT NULL,
-                pattern_color_id INTEGER NOT NULL,
+                base_color_id  INTEGER,
+                pattern_color_id INTEGER,
             
                 UNIQUE(type_id, base_color_id, pattern_color_id),
 
@@ -63,9 +65,9 @@ def create_tables():
                 FOREIGN KEY (owner) REFERENCES users (username) ON DELETE CASCADE,
                 FOREIGN KEY (tropical_fish) REFERENCES tropical_fishes_variants (id) ON DELETE CASCADE
             )
-        """,
+        """
     )
-
+    
     try:
         config = load_config()
         with psycopg2.connect(**config) as conn:
@@ -76,6 +78,5 @@ def create_tables():
     except (psycopg2.DatabaseError, Exception) as error:
         print(error)
 
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     create_tables()
