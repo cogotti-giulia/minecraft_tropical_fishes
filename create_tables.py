@@ -1,6 +1,7 @@
 import psycopg2
 from config import load_config
 
+
 def create_tables():
     """create tables in postgreSQL db"""
     commands = (
@@ -62,9 +63,9 @@ def create_tables():
                 FOREIGN KEY (owner) REFERENCES users (username) ON DELETE CASCADE,
                 FOREIGN KEY (tropical_fish) REFERENCES tropical_fishes_variants (id) ON DELETE CASCADE
             )
-        """
+        """,
     )
-    
+
     try:
         config = load_config()
         with psycopg2.connect(**config) as conn:
@@ -75,5 +76,6 @@ def create_tables():
     except (psycopg2.DatabaseError, Exception) as error:
         print(error)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     create_tables()
