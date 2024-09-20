@@ -7,11 +7,10 @@ import sys
 import logging
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(filename="insert.log", encoding="utf-8", level=logging.DEBUG)
+logging.basicConfig(filename="insert.log", encoding="utf-8", level=logging.ERROR)
 
-# TODO: empty file after getting the fishes
+
 # TODO: find out if i can integrate this with carpet
-
 
 if __name__ == "__main__":
 
@@ -24,7 +23,9 @@ if __name__ == "__main__":
     insert_user(username)
 
     r = 0
-    with open(filename) as file:
+    bad_lines = list()
+
+    with open(filename, "r") as file:
         for line in file:
             r = r + 1
 
@@ -34,10 +35,14 @@ if __name__ == "__main__":
             # print(words)
 
             if len(words) == 1:  # unique fishes
-                owner_and_tropical_fish(True, username, words[0].lower())
+                ris = owner_and_tropical_fish(True, username, words[0].lower())
+
+                if ris is None:
+                    bad_lines.append(line)
+
             elif len(words) == 2:  # fish with same base and patter color
                 # words.append(words[-1])
-                owner_and_tropical_fish(
+                ris = owner_and_tropical_fish(
                     False,
                     username,
                     None,
@@ -45,8 +50,12 @@ if __name__ == "__main__":
                     words[1].lower(),
                     words[1].lower(),
                 )
+
+                if ris is None:
+                    bad_lines.append(line)
+
             elif len(words) == 3:  # default fishing name
-                owner_and_tropical_fish(
+                ris = owner_and_tropical_fish(
                     False,
                     username,
                     None,
@@ -54,6 +63,9 @@ if __name__ == "__main__":
                     words[1].lower(),
                     words[2].lower(),
                 )
+                if ris is None:
+                    bad_lines.append(line)
+
             else:
                 logger.error(
                     "*** Skipping row {}. ***\nFile is bad formatted.\nPlease check your file.".format(
@@ -61,4 +73,23 @@ if __name__ == "__main__":
                     )
                 )
 
-    open(filename, 'w').close()
+    open(filename, "w").close()  # delete file
+
+    if bad_lines:
+        # delete all rows except the bad formattend (also print it for user)
+        with open(filename, "r+") as file:
+            for l in bad_lines[:-1]:
+                file.write(l)
+
+            file.write(bad_lines[-1].replace("\n", ""))
+            file.truncate()
+
+        print(
+            "Something went wrong! Please fix your grammar on the text file, then try again!\nList of wrong lines:"
+        )
+
+        r = 0
+        for l in bad_lines:
+            r = r + 1
+            str_r = str(r)
+            print(str_r + " " + l.replace("\n", ""))

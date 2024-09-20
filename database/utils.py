@@ -153,7 +153,7 @@ def insert_tropical_fish_variant(
     q_get_id_from_tpfishname = "SELECT id FROM tropical_fishes_name\
                                     WHERE (name = %s OR name_eng = %s)"
 
-    q_insert_variant_tpfish22 = "INSERT INTO tropical_fishes_variants(is_unique, name_id) VALUES(%s, %s) RETURNING *"
+    q_insert_variant_tpfish22 = "INSERT INTO tropical_fishes_variants(is_unique, name_id) VALUES(%s, %s) RETURNING id"
 
     # NOT UNIQUE
     q_get_id_from_tpfishtype = "SELECT id FROM tropical_fishes_type\
@@ -268,7 +268,7 @@ def owner_and_tropical_fish(
             fish_base_color,
             fish_pattern_color,
         )
-
+    
     # reference to the owner of the fish
     q_insert_fish_owner = "INSERT INTO owner_and_tropical_fishes(owner, tropical_fish) VALUES(%s, %s) RETURNING id"
 
@@ -285,3 +285,5 @@ def owner_and_tropical_fish(
 
     except (Exception, psycopg2.DatabaseError) as error:
         logger.debug(error)
+    
+    return fishvariant_id
