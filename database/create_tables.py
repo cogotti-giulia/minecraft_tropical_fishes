@@ -19,31 +19,31 @@ def create_tables():
             )
         """,
         """
-            CREATE TABLE colors (
+            CREATE TABLE color (
                 id SERIAL NOT NULL PRIMARY KEY,
                 color VARCHAR(255) UNIQUE NOT NULL,
                 color_eng VARCHAR(255) UNIQUE NOT NULL
             )
         """,
         """
-            CREATE TABLE tropical_fishes_type (
+            CREATE TABLE tropical_fish_type (
                 id SERIAL NOT NULL PRIMARY KEY,
                 type VARCHAR(255) UNIQUE NOT NULL,
                 type_eng VARCHAR(255) UNIQUE NOT NULL
             )
         """,
         """
-            CREATE TABLE tropical_fishes_name (
+            CREATE TABLE tropical_fish_name (
                 id SERIAL NOT NULL PRIMARY KEY,
                 name VARCHAR(255) UNIQUE NOT NULL,
                 name_eng VARCHAR(255) UNIQUE NOT NULL,
                 type_id INTEGER,
 
-                FOREIGN KEY (type_id) REFERENCES tropical_fishes_type (id)
+                FOREIGN KEY (type_id) REFERENCES tropical_fish_type (id)
             )
         """,
         """
-            CREATE TABLE tropical_fishes_variants(
+            CREATE TABLE tropical_fish_variant (
                 id SERIAL NOT NULL PRIMARY KEY,
                 is_unique BOOLEAN NOT NULL,
 
@@ -55,21 +55,21 @@ def create_tables():
             
                 UNIQUE(type_id, base_color_id, pattern_color_id),
 
-                FOREIGN KEY (base_color_id) REFERENCES colors (id),
-                FOREIGN KEY (pattern_color_id) REFERENCES colors (id),
-                FOREIGN KEY (type_id) REFERENCES tropical_fishes_type (id),
-                FOREIGN KEY (name_id) REFERENCES tropical_fishes_name (id)
+                FOREIGN KEY (base_color_id) REFERENCES color (id),
+                FOREIGN KEY (pattern_color_id) REFERENCES color (id),
+                FOREIGN KEY (type_id) REFERENCES tropical_fish_type (id),
+                FOREIGN KEY (name_id) REFERENCES tropical_fish_name (id)
                 
             )
         """,
         """
-            CREATE TABLE owner_and_tropical_fishes(
+            CREATE TABLE owner_and_tropical_fish (
                 id SERIAL NOT NULL PRIMARY KEY,
                 owner VARCHAR(255) NOT NULL,
                 tropical_fish INTEGER NOT NULL,
 
                 FOREIGN KEY (owner) REFERENCES users (username) ON DELETE CASCADE,
-                FOREIGN KEY (tropical_fish) REFERENCES tropical_fishes_variants (id) ON DELETE CASCADE
+                FOREIGN KEY (tropical_fish) REFERENCES tropical_fish_variant (id) ON DELETE CASCADE
             )
         """,
     )

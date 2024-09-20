@@ -1,8 +1,11 @@
 import psycopg2
 import sys
 from database.config import load_config
+import database.queries as sql
 
 import logging
+
+NONE_FIELD = None
 
 logger = logging.getLogger(__name__)
 
@@ -12,12 +15,10 @@ logging.basicConfig(
     level=logging.DEBUG,
 )
 
+
+# insert data
 def insert_user(username):
     """insert a new minecraft user into users table"""
-
-    q_search_user = "SELECT * FROM users WHERE username = %s"
-
-    q_insert_user = "INSERT INTO users(username) VALUES(%s)"
 
     config = load_config("/database")
 
@@ -26,14 +27,14 @@ def insert_user(username):
             with conn.cursor() as cur:
                 # execute the INSERT statement
                 cur.execute(
-                    q_search_user,
+                    sql.Q_SEARCH_USER,
                     [
                         username,
                     ],
                 )
 
                 if cur.rowcount == 0:  # no results
-                    cur.execute(q_insert_user, (username,))
+                    cur.execute(sql.Q_INSERT_USER, (username,))
 
                 # commit the changes to the database
                 conn.commit()
@@ -41,6 +42,7 @@ def insert_user(username):
         logger.debug(error)
 
 
+# search data
 def search_tropical_fish_variant(
     is_unique,
     fish_name=None,
@@ -48,32 +50,19 @@ def search_tropical_fish_variant(
     fish_base_color=None,
     fish_pattern_color=None,
 ):
-    q_get_id_from_tpfishname = "SELECT id FROM tropical_fishes_name\
-                                    WHERE (name = %s OR name_eng = %s)"
 
-    q_get_id_from_tpfishvariant_22unique = "SELECT id FROM tropical_fishes_variants\
-                                    WHERE (is_unique AND name_id = %s)"
-
-    q_get_id_from_tpfishtype = "SELECT id FROM tropical_fishes_type\
-                                    WHERE (type = %s OR type_eng = %s)"
-
-    q_get_id_form_colors = "SELECT id FROM colors\
-                            WHERE (color = %s OR color_eng = %s)"
-
-    q_get_id_from_tpfishvariant = "SELECT id FROM tropical_fishes_variants\
-                                    WHERE not is_unique AND\
-                                    (type_id = %s AND base_color_id = %s AND pattern_color_id = %s)"
-
+    fishvariant_id = None
+    
     config = load_config("/database")
 
     try:
         with psycopg2.connect(**config) as conn:
             with conn.cursor() as cur:
                 # get id of the tp fish
-
+                
                 if is_unique:
                     cur.execute(
-                        q_get_id_from_tpfishname,
+                        sql.Q_GET_ID_NAME,
                         (
                             fish_name,
                             fish_name,
@@ -82,9 +71,13 @@ def search_tropical_fish_variant(
 
                     # get the result id
                     fishname_id = cur.fetchone()[0]
+               
                     cur.execute(
-                        q_get_id_from_tpfishvariant_22unique,
-                        (fishname_id,),
+                        sql.Q_GET_ID_VARIANT_UNIQUE22,
+                        (
+
+                            fishname_id,
+                        ),
                     )
 
                     if cur.rowcount != 0:
@@ -92,7 +85,7 @@ def search_tropical_fish_variant(
 
                 else:
                     cur.execute(
-                        q_get_id_from_tpfishtype,
+                        sql.Q_GET_ID_TYPE,
                         (
                             fish_type,
                             fish_type,
@@ -103,7 +96,7 @@ def search_tropical_fish_variant(
 
                     # search for base and pattern color id
                     cur.execute(
-                        q_get_id_form_colors,
+                        sql.Q_GET_ID_COLOR,
                         (
                             fish_base_color,
                             fish_base_color,
@@ -112,7 +105,7 @@ def search_tropical_fish_variant(
                     basecolor_id = cur.fetchone()[0]
 
                     cur.execute(
-                        q_get_id_form_colors,
+                        sql.Q_GET_ID_COLOR,
                         (
                             fish_pattern_color,
                             fish_pattern_color,
@@ -121,7 +114,7 @@ def search_tropical_fish_variant(
                     patterncolor_id = cur.fetchone()[0]
 
                     cur.execute(
-                        q_get_id_from_tpfishvariant,
+                        sql.Q_GET_ID_VARIANT,
                         (
                             fishtype_id,
                             basecolor_id,
@@ -148,23 +141,8 @@ def insert_tropical_fish_variant(
     new_fish_pattern_color=None,
 ):
     """Insert new tropical fish with type in the tropical_fishes table"""
-
-    # UNIQUE
-    q_get_id_from_tpfishname = "SELECT id FROM tropical_fishes_name\
-                                    WHERE (name = %s OR name_eng = %s)"
-
-    q_insert_variant_tpfish22 = "INSERT INTO tropical_fishes_variants(is_unique, name_id) VALUES(%s, %s) RETURNING id"
-
-    # NOT UNIQUE
-    q_get_id_from_tpfishtype = "SELECT id FROM tropical_fishes_type\
-                                    WHERE (type = %s OR type_eng = %s)"
-
-    q_get_id_form_colors = "SELECT id FROM colors\
-                            WHERE (color = %s OR color_eng = %s)"
-
-    q_insert_variant_tpfish = "INSERT INTO tropical_fishes_variants(is_unique, type_id, base_color_id, pattern_color_id)\
-            VALUES(%s, %s, %s, %s) RETURNING id"
-
+    fishvariant_id = None
+  
     config = load_config("/database")
 
     try:
@@ -172,7 +150,7 @@ def insert_tropical_fish_variant(
             with conn.cursor() as cur:
                 if is_unique:
                     cur.execute(
-                        q_get_id_from_tpfishname,
+                        sql.Q_GET_ID_NAME,
                         (
                             new_fish_name,
                             new_fish_name,
@@ -185,16 +163,18 @@ def insert_tropical_fish_variant(
 
                         # insert into tp fish table
                         cur.execute(
-                            q_insert_variant_tpfish22,
+                            sql.Q_INSERT_VARIANT_UNIQUE22,
                             (
                                 True,
                                 fishname_id,
                             ),
                         )
-                        fishvariant_id = cur.fetchone()[0]
+
+                        if cur.rowcount != 0:
+                            fishvariant_id = cur.fetchone()[0]
                 else:
                     cur.execute(
-                        q_get_id_from_tpfishtype,
+                        sql.Q_GET_ID_TYPE,
                         (
                             new_fish_type,
                             new_fish_type,
@@ -205,7 +185,7 @@ def insert_tropical_fish_variant(
                         fishtype_id = cur.fetchone()[0]
                         # search for base and pattern color id
                         cur.execute(
-                            q_get_id_form_colors,
+                            sql.Q_GET_ID_COLOR,
                             (
                                 new_fish_base_color,
                                 new_fish_base_color,
@@ -214,7 +194,7 @@ def insert_tropical_fish_variant(
                         basecolor_id = cur.fetchone()[0]
 
                         cur.execute(
-                            q_get_id_form_colors,
+                            sql.Q_GET_ID_COLOR,
                             (
                                 new_fish_pattern_color,
                                 new_fish_pattern_color,
@@ -223,7 +203,7 @@ def insert_tropical_fish_variant(
                         patterncolor_id = cur.fetchone()[0]
                         # execute the INSERT statement
                         cur.execute(
-                            q_insert_variant_tpfish,
+                            sql.Q_INSERT_VARIANT,
                             (
                                 False,
                                 fishtype_id,
@@ -232,7 +212,8 @@ def insert_tropical_fish_variant(
                             ),
                         )
 
-                        fishvariant_id = cur.fetchone()[0]
+                        if cur.rowcount != 0:
+                            fishvariant_id = cur.fetchone()[0]
 
                 # commit the changes to the database
                 conn.commit()
@@ -268,9 +249,6 @@ def owner_and_tropical_fish(
             fish_base_color,
             fish_pattern_color,
         )
-    
-    # reference to the owner of the fish
-    q_insert_fish_owner = "INSERT INTO owner_and_tropical_fishes(owner, tropical_fish) VALUES(%s, %s) RETURNING id"
 
     config = load_config("/database")
 
@@ -278,12 +256,12 @@ def owner_and_tropical_fish(
         with psycopg2.connect(**config) as conn:
             with conn.cursor() as cur:
 
-                cur.execute(q_insert_fish_owner, (owner, fishvariant_id))
+                cur.execute(sql.Q_INSERT_FISH_OWNER, (owner, fishvariant_id))
 
                 # commit the changes to the database
                 conn.commit()
 
     except (Exception, psycopg2.DatabaseError) as error:
         logger.debug(error)
-    
+
     return fishvariant_id
