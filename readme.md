@@ -34,4 +34,4 @@ pesce blocco-blu
 pesce pappagallo pinna gialla
 ```
 
-After insertion into the database the file will be cleaned to avoid inserting the same rows again and again.
+After insertion into the database the file will be cleaned to avoid inserting the same rows again and again. Except when there is something bad written (like grammar errors), those lines stays there to be fixed by the user!
