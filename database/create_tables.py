@@ -9,7 +9,6 @@ logging.basicConfig(filename="create_tables.log", encoding="utf-8", level=loggin
 
 # TODO: in tropical_fishes_variant table set as not null type and base and pattern color when added to the unique name fishes
 
-
 def create_tables():
     """create tables in postgreSQL db"""
     commands = (
@@ -83,7 +82,3 @@ def create_tables():
                     cur.execute(command)
     except (psycopg2.DatabaseError, Exception) as error:
         logger.debug(error)
-
-
-if __name__ == "__main__":
-    create_tables()

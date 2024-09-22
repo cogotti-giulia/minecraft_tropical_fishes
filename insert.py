@@ -30,7 +30,7 @@ if __name__ == "__main__":
             r = r + 1
 
             line_no_eol = line.replace("\n", "")  # to remove newlines '\n'
-            words = line_no_eol.split("-")  # split line on '-'
+            words = line_no_eol.split(",")  # split line on '-'
             # print(len(words))
             # print(words)
 

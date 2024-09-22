@@ -25,7 +25,6 @@ def insert_user(username):
     try:
         with psycopg2.connect(**config) as conn:
             with conn.cursor() as cur:
-                # execute the INSERT statement
                 cur.execute(
                     sql.Q_SEARCH_USER,
                     [
