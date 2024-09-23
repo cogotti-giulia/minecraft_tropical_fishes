@@ -1,10 +1,10 @@
+.vscode
 venv
 __pycache__
 database.ini
 test_chironed.txt
 test_giuxmirtiu.txt
 insert.log
-init_db.log
-insert_new_tropical_fish_variant.log
+database/init_db.log
 database/utils.log
 database/create_tables.log
