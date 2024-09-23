@@ -2,3 +2,4 @@
 psycopg2==2.9.9
 numpy==2.1.1
 pandas==2.2.3
+black==24.8.0

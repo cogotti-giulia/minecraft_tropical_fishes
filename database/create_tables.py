@@ -4,7 +4,7 @@ from config import load_config
 import logging
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(filename="create_tables.log", encoding="utf-8", level=logging.DEBUG)
+logging.basicConfig(filename="database/create_tables.log", encoding="utf-8", level=logging.DEBUG)
 
 
 # TODO: in tropical_fishes_variant table set as not null type and base and pattern color when added to the unique name fishes

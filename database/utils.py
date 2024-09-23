@@ -20,7 +20,7 @@ logging.basicConfig(
 def insert_user(username):
     """insert a new minecraft user into users table"""
 
-    config = load_config("/database")
+    config = load_config()
 
     try:
         with psycopg2.connect(**config) as conn:
@@ -52,7 +52,7 @@ def search_tropical_fish_variant(
 
     fishvariant_id = None
     
-    config = load_config("/database")
+    config = load_config()
 
     try:
         with psycopg2.connect(**config) as conn:
@@ -142,7 +142,7 @@ def insert_tropical_fish_variant(
     """Insert new tropical fish with type in the tropical_fishes table"""
     fishvariant_id = None
   
-    config = load_config("/database")
+    config = load_config()
 
     try:
         with psycopg2.connect(**config) as conn:
@@ -249,7 +249,7 @@ def owner_and_tropical_fish(
             fish_pattern_color,
         )
 
-    config = load_config("/database")
+    config = load_config()
 
     try:
         with psycopg2.connect(**config) as conn:

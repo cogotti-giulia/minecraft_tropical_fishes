@@ -1,7 +1,8 @@
 import psycopg2
 from config import load_config
-
+from config import config_ini
 import os
+import sys
 
 import logging
 
@@ -9,6 +10,9 @@ import pandas as pd
 import queries as sql
 
 from create_tables import create_tables
+
+
+#TODO: config ini file by user input from console
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(filename="database/init_db.log", encoding="utf-8", level=logging.DEBUG)
@@ -146,25 +150,25 @@ if __name__ == "__main__":
     # create tables!
     create_tables()
     # fill table color with default ita/eng values
-    df_color = pd.read_csv(os.getcwd() + "/default_values/colors.csv")
+    df_color = pd.read_csv("database/default_values/colors.csv")
     arr_color_ita = df_color["ITA"].values
     arr_color_eng = df_color["ENG"].values
     insert_many_color(arr_color_ita, arr_color_eng)
 
     # fill type table with default ita/eng values
-    df_type = pd.read_csv(os.getcwd() + "/default_values/types.csv")
+    df_type = pd.read_csv("database/default_values/types.csv")
     arr_type_ita = df_type["ITA"].values
     arr_type_eng = df_type["ENG"].values
     insert_many_tropical_fish_type(arr_type_ita, arr_type_eng)
 
     # fill name table with default ita/eng values
-    df_name = pd.read_csv(os.getcwd() + "/default_values/names.csv")
+    df_name = pd.read_csv("database/default_values/names.csv")
     arr_name_ita = df_name["ITA"].values
     arr_name_eng = df_name["ENG"].values
     insert_many_tropical_fish_name(arr_name_ita, arr_name_eng)
 
     # TODO: ADD INTO THE DATABASE TYPE AND COLOR OF THE 22 REAL LIFE SPECIES
     df_ntc = pd.read_csv(
-        os.getcwd() + "/default_values/realLife_names_types_colors.csv"
+        "database/default_values/realLife_names_types_colors.csv"
     )
-    print(df_ntc)
+    #print(df_ntc)

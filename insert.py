@@ -14,9 +14,12 @@ logging.basicConfig(filename="insert.log", encoding="utf-8", level=logging.ERROR
 
 if __name__ == "__main__":
 
-    argv = sys.argv
-    username = argv[1].lower()
-    filename = argv[2]
+    #argv = sys.argv
+    #username = argv[1].lower()
+    #filename = argv[2]
+
+    username = input("Enter minecraft username: ").lower()
+    filename = input("Enter filename of tropical fishes: ")
 
     # check if user already exists
     # otherwise add to db
