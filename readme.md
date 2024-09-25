@@ -20,7 +20,7 @@ password=db_psw
     - create the database 
     - initialize the database with default values (colors, types and names)
 
-4. run `make run` to run the program. It will ask you to insert the **minecraft** username and the **filename** in which are stored the fishes names/types, then it'll insert all the data into the database.
+4. run `make run` to run the program. It will ask you to select an option, please do it (otherwise why are you using it??).
 
 **WARNING!**
 The _file_ must contain one fish for row. Type, base color and pattern color must be divided by ','. For the 22 unique fish (the real life species) just write the name in a row. If a fish has the same color for base and patter, you can write it only one time.
