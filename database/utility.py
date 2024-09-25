@@ -257,10 +257,110 @@ def owner_and_tropical_fish(
 
                 cur.execute(sql.Q_INSERT_FISH_OWNER, (owner, fishvariant_id))
 
-                # commit the changes to the database
                 conn.commit()
 
     except (Exception, psycopg2.DatabaseError) as error:
         logger.debug(error)
 
     return fishvariant_id
+
+
+def count_variant_user(username):
+    config = load_config()
+
+    
+    try:
+        with psycopg2.connect(**config) as conn:
+            with conn.cursor() as cur:
+
+                cur.execute(sql.Q_COUNT_VARIANT_USER, (username,))
+                
+                if cur.rowcount != 0:
+                    tot = cur.fetchone()[0]
+
+                conn.commit()
+
+    except (Exception, psycopg2.DatabaseError) as error:
+        logger.debug(error)
+
+    return tot
+
+
+
+def insert_data_from_file(username, filename):
+    # check if user already exists
+    # otherwise add to db
+    insert_user(username)
+
+    r = 0
+    bad_lines = list()
+
+    with open(filename, "r") as file:
+        for line in file:
+            r = r + 1
+
+            line_no_eol = line.replace("\n", "")  # to remove newlines '\n'
+            words = line_no_eol.split(",")  # split line on '-'
+            # print(len(words))
+            # print(words)
+
+            if len(words) == 1:  # unique fishes
+                ris = owner_and_tropical_fish(True, username, words[0].lower())
+
+                if ris is None:
+                    bad_lines.append(line)
+
+            elif len(words) == 2:  # fish with same base and patter color
+                # words.append(words[-1])
+                ris = owner_and_tropical_fish(
+                    False,
+                    username,
+                    None,
+                    words[0].lower(),
+                    words[1].lower(),
+                    words[1].lower(),
+                )
+
+                if ris is None:
+                    bad_lines.append(line)
+
+            elif len(words) == 3:  # default fishing name
+                ris = owner_and_tropical_fish(
+                    False,
+                    username,
+                    None,
+                    words[0].lower(),
+                    words[1].lower(),
+                    words[2].lower(),
+                )
+                if ris is None:
+                    bad_lines.append(line)
+
+            else:
+                logger.error(
+                    "*** Skipping row {}. ***\nFile is bad formatted.\nPlease check your file.".format(
+                        r
+                    )
+                )
+
+    open(filename, "w").close()  # delete file
+
+    if bad_lines:
+        # delete all rows except the bad formattend (also print it for user)
+        with open(filename, "r+") as file:
+            for l in bad_lines[:-1]:
+                file.write(l)
+
+            file.write(bad_lines[-1].replace("\n", ""))
+            file.truncate()
+
+        print(
+            "Something went wrong! Please fix your grammar on the text file, then try again!\nList of wrong lines:"
+        )
+
+        r = 0
+        for l in bad_lines:
+            r = r + 1
+            str_r = str(r)
+            print(str_r + " " + l.replace("\n", ""))
+

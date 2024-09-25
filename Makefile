@@ -7,7 +7,7 @@ build: $(VENV)/bin/activate
 	$(PYTHON) database/init_db.py
 
 run: $(VENV)/bin/activate
-	$(PYTHON) insert.py
+	$(PYTHON) app.py
 
 $(VENV)/bin/activate: requirements.txt
 	python3 -m venv $(VENV)

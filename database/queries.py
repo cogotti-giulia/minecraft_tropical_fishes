@@ -53,13 +53,14 @@ Q_GET_ID_COLOR = "SELECT id FROM color\
                     WHERE (color = %s OR color_eng = %s)"
 
 
-# contare i pesci tropicali (senza duplicati) di un certo giocatore
-Q_COUNT_USER_VARIANT = "select count(*)\
-                            from tropical_fish_variant tfv join owner_and_tropical_fish oatf\
-                                on tfv.id = oatf.tropical_fish\
-		                        where oatf.owner = %s"
+########################### GET SOME DATA ######################
+# get total number of tp fishes of a specific user
+Q_COUNT_VARIANT_USER = "select count(*)\
+                        from tropical_fish_variant tfv join owner_and_tropical_fish oatf\
+                            on tfv.id = oatf.tropical_fish\
+		                where oatf.owner = %s"
 
+# TODO: finish queries
 # contare il numero di pesci di un certo tipo dato il tipo e il giocatore
 # contare il numero di pesci di ogni tipo
-
-# 
+# visualizzare anche quali pesci sono!
