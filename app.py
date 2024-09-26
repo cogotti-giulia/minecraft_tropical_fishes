@@ -52,34 +52,43 @@ if __name__ == "__main__":
                     match (action_get):
                         case "1":
                             username = input("Enter minecraft username: ").lower()
-                            print(
-                                "\nWOW! ",
-                                username,
-                                "has discoverd ",
-                                count_variant_user(username),
-                                " of 2700 variants of tropical fishes!\n",
-                            )
+                            
+                            total = count_variant_user(username)
+
+                            if(total is None):
+                                print("\n==> Something went wrong... Pls check if ", username, "exists")
+                            else:
+                                print(
+                                    "\nWOW! ",
+                                    username,
+                                    "has discoverd ",
+                                    total,
+                                    " of 2700 variants of tropical fishes!\n",
+                                )
 
                             input("\n==> Press Enter to continue...\n")
                         case "2":
                             username = input("Enter minecraft username: ").lower()
-                            total, np_variants = count_name_and_list_user(username)
+                            np_variants, total = count_name_and_list_user(username)
 
-                            print(
-                                "\nList of the ",
-                                count_variant_user(username),
-                                " of 2700 variants of tropical fishes discovered by",
-                                username,
-                                "\n",
-                            )
-
-                            print(
-                                tabulate(
-                                    np_variants,
-                                    headers=["Variant", "Total"],
-                                    tablefmt="grid",
+                            if(np_variants is None):
+                                print("\n==> Something went wrong... Pls check if ", username, "exists")
+                            else:
+                                print(
+                                    "\nList of the ",
+                                    count_variant_user(username),
+                                    " of 2700 variants of tropical fishes discovered by",
+                                    username,
+                                    "\n",
                                 )
-                            )
+
+                                print(
+                                    tabulate(
+                                        np_variants,
+                                        headers=["Variant", "Total"],
+                                        tablefmt="grid",
+                                    )
+                                )
                             input("\n==> Press Enter to continue...\n")
 
                         case "3":

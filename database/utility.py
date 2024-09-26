@@ -8,7 +8,6 @@ import database.queries as sql
 
 from database.config import load_config
 
-NONE_FIELD = None
 
 logger = logging.getLogger(__name__)
 
@@ -333,9 +332,8 @@ def insert_data_from_file(username, filename):
             file.truncate()
 
         print(
-            "Something went wrong! Please fix your grammar on the text file, then try again!\nList of wrong lines:"
+            "==> Something went wrong! Please fix your grammar on the text file, then try again!\nList of wrong lines:"
         )
-
         r = 0
         for l in bad_lines:
             r = r + 1
@@ -356,6 +354,7 @@ def get_data_from_db_given_user(username, query):
                     return cur.fetchall()
 
                 return None
+
                 conn.commit()
 
     except (Exception, psycopg2.DatabaseError) as error:
@@ -370,28 +369,34 @@ def count_variant_user(username):
 
 def count_name_and_list_user(username):
 
-    result_name = get_data_from_db_given_user(username, sql.Q_COUNT_NAME_LIST)
-    result_type = get_data_from_db_given_user(username, sql.Q_COUNT_TYPE_LIST)
+    search_user = get_data_from_db_given_user(username, sql.Q_SEARCH_USER)
 
-    # total rows just to show it
-    total = len(result_name) + len(result_type)
+    if search_user:
+        result_name = get_data_from_db_given_user(username, sql.Q_COUNT_NAME_LIST)
+        result_type = get_data_from_db_given_user(username, sql.Q_COUNT_TYPE_LIST)
 
-    tmp_type = []
-    tmp_tot = []
-    for el in result_type:
-        # concatenate type, base color and pattern color
-        tmp = el[0] + " " + el[1] + " " + el[2]
-        tmp_type.append(tmp)
-        tmp_tot.append(el[3])
+        # total rows just to show it
+        total = (0 if result_name is None else len(result_name)) + (
+            0 if result_type is None else len(result_type)
+        )
+        tmp_type = []
+        tmp_tot = []
+        for el in result_type:
+            # concatenate type, base color and pattern color
+            tmp = el[0] + " " + el[1] + " " + el[2]
+            tmp_type.append(tmp)
+            tmp_tot.append(el[3])
 
-    list_type = []
-    for i, j in zip(tmp_type, tmp_tot):
-        list_type.append((i, j))
+        list_type = []
+        for i, j in zip(tmp_type, tmp_tot):
+            list_type.append((i, j))
 
-    list_variants = result_name + list_type
-    list_variants.sort()
+        list_variants = result_name + list_type
+        list_variants.sort()
 
-    # all variants with total of each ordered in alphabetic order
-    np_variants = np.array(list_variants)
+        # all variants with total of each ordered in alphabetic order
+        np_variants = np.array(list_variants)
 
-    return (total, np_variants)
+        return (np_variants, total)
+
+    return None, None
