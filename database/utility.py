@@ -1,9 +1,12 @@
 import psycopg2
 import sys
-from database.config import load_config
+import logging
+
+import numpy as np
+
 import database.queries as sql
 
-import logging
+from database.config import load_config
 
 NONE_FIELD = None
 
@@ -51,14 +54,14 @@ def search_tropical_fish_variant(
 ):
 
     fishvariant_id = None
-    
+
     config = load_config()
 
     try:
         with psycopg2.connect(**config) as conn:
             with conn.cursor() as cur:
                 # get id of the tp fish
-                
+
                 if is_unique:
                     cur.execute(
                         sql.Q_GET_ID_NAME,
@@ -70,13 +73,10 @@ def search_tropical_fish_variant(
 
                     # get the result id
                     fishname_id = cur.fetchone()[0]
-               
+
                     cur.execute(
                         sql.Q_GET_ID_VARIANT_UNIQUE22,
-                        (
-
-                            fishname_id,
-                        ),
+                        (fishname_id,),
                     )
 
                     if cur.rowcount != 0:
@@ -141,7 +141,7 @@ def insert_tropical_fish_variant(
 ):
     """Insert new tropical fish with type in the tropical_fishes table"""
     fishvariant_id = None
-  
+
     config = load_config()
 
     try:
@@ -265,28 +265,6 @@ def owner_and_tropical_fish(
     return fishvariant_id
 
 
-def count_variant_user(username):
-    config = load_config()
-
-    
-    try:
-        with psycopg2.connect(**config) as conn:
-            with conn.cursor() as cur:
-
-                cur.execute(sql.Q_COUNT_VARIANT_USER, (username,))
-                
-                if cur.rowcount != 0:
-                    tot = cur.fetchone()[0]
-
-                conn.commit()
-
-    except (Exception, psycopg2.DatabaseError) as error:
-        logger.debug(error)
-
-    return tot
-
-
-
 def insert_data_from_file(username, filename):
     # check if user already exists
     # otherwise add to db
@@ -364,3 +342,56 @@ def insert_data_from_file(username, filename):
             str_r = str(r)
             print(str_r + " " + l.replace("\n", ""))
 
+
+def get_data_from_db_given_user(username, query):
+    config = load_config()
+
+    try:
+        with psycopg2.connect(**config) as conn:
+            with conn.cursor() as cur:
+
+                cur.execute(query, (username,))
+
+                if cur.rowcount != 0:
+                    return cur.fetchall()
+
+                return None
+                conn.commit()
+
+    except (Exception, psycopg2.DatabaseError) as error:
+        logger.debug(error)
+
+
+def count_variant_user(username):
+    result = get_data_from_db_given_user(username, sql.Q_COUNT_VARIANT_USER)
+
+    return result[0][0]
+
+
+def count_name_and_list_user(username):
+
+    result_name = get_data_from_db_given_user(username, sql.Q_COUNT_NAME_LIST)
+    result_type = get_data_from_db_given_user(username, sql.Q_COUNT_TYPE_LIST)
+
+    # total rows just to show it
+    total = len(result_name) + len(result_type)
+
+    tmp_type = []
+    tmp_tot = []
+    for el in result_type:
+        # concatenate type, base color and pattern color
+        tmp = el[0] + " " + el[1] + " " + el[2]
+        tmp_type.append(tmp)
+        tmp_tot.append(el[3])
+
+    list_type = []
+    for i, j in zip(tmp_type, tmp_tot):
+        list_type.append((i, j))
+
+    list_variants = result_name + list_type
+    list_variants.sort()
+
+    # all variants with total of each ordered in alphabetic order
+    np_variants = np.array(list_variants)
+
+    return (total, np_variants)
