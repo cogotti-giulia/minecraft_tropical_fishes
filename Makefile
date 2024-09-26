@@ -4,7 +4,7 @@ PIP = $(VENV)/bin/pip
 
 build: $(VENV)/bin/activate
 	@truncate -s 0 database/*.log
-	$(PYTHON) database/init_db.py
+	rm -rf database/*.ini
 
 run: $(VENV)/bin/activate
 	$(PYTHON) app.py

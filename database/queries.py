@@ -1,3 +1,18 @@
+########################## DATABASE ##########################
+
+Q_CHECK_IF_DB_EXISTS = "SELECT datname\
+                        FROM pg_catalog.pg_database\
+                        WHERE lower(datname) = lower(%s)"
+
+Q_CHECK_IF_TB_EXISTS = "SELECT EXISTS(SELECT 1 FROM information_schema.tables\
+                        WHERE table_catalog=%s\
+                            AND table_schema='public'\
+                                AND table_name=%s)"
+
+Q_CHECK_IF_ROLE_EXISTS = "SELECT rolname\
+                            FROM pg_catalog.pg_roles\
+                            WHERE rolname = %s"
+
 ############################ USER ############################
 
 Q_INSERT_USER = "INSERT INTO users(username) VALUES(%s)"

@@ -1,10 +1,7 @@
 .vscode
 venv
 __pycache__
-database.ini
-test_chironed.txt
-test_giuxmirtiu.txt
-insert.log
-database/init_db.log
-database/utils.log
-database/create_tables.log
+*.ini
+*.txt
+*log
+database/*.log

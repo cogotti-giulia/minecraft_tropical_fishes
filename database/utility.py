@@ -12,7 +12,7 @@ from database.config import load_config
 logger = logging.getLogger(__name__)
 
 logging.basicConfig(
-    filename="database/utils.log",
+    filename="database/utility.log",
     encoding="utf-8",
     level=logging.DEBUG,
 )
@@ -264,6 +264,7 @@ def owner_and_tropical_fish(
     return fishvariant_id
 
 
+# TODO: CHECK IF FILE EXISTS!
 def insert_data_from_file(username, filename):
     # check if user already exists
     # otherwise add to db

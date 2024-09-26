@@ -3,6 +3,10 @@ import time
 import logging
 import numpy as np
 
+import database.config as db
+
+import database.config as conf
+
 from database.utility import insert_data_from_file
 from database.utility import count_variant_user
 from database.utility import count_name_and_list_user
@@ -15,6 +19,8 @@ logging.basicConfig(filename="app.log", encoding="utf-8", level=logging.ERROR)
 # TODO: add compatibility with windows like systems
 
 if __name__ == "__main__":
+
+    conf.check_if_db_exists()
 
     exit = False
     while not exit:
@@ -52,11 +58,15 @@ if __name__ == "__main__":
                     match (action_get):
                         case "1":
                             username = input("Enter minecraft username: ").lower()
-                            
+
                             total = count_variant_user(username)
 
-                            if(total is None):
-                                print("\n==> Something went wrong... Pls check if ", username, "exists")
+                            if total is None:
+                                print(
+                                    "\n==> Something went wrong... Pls check if ",
+                                    username,
+                                    "exists",
+                                )
                             else:
                                 print(
                                     "\nWOW! ",
@@ -71,8 +81,12 @@ if __name__ == "__main__":
                             username = input("Enter minecraft username: ").lower()
                             np_variants, total = count_name_and_list_user(username)
 
-                            if(np_variants is None):
-                                print("\n==> Something went wrong... Pls check if ", username, "exists")
+                            if np_variants is None:
+                                print(
+                                    "\n==> Something went wrong... Pls check if ",
+                                    username,
+                                    "exists",
+                                )
                             else:
                                 print(
                                     "\nList of the ",
