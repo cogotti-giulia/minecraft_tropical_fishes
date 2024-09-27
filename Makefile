@@ -4,7 +4,6 @@ PIP = $(VENV)/bin/pip
 
 build: $(VENV)/bin/activate
 	@truncate -s 0 database/*.log
-	rm -rf database/*.ini
 
 run: $(VENV)/bin/activate
 	$(PYTHON) app.py
@@ -16,3 +15,5 @@ $(VENV)/bin/activate: requirements.txt
 clean:
 	rm -rf __pycache__
 	rm -rf $(VENV)
+	rm -rf database/*.ini
+	rm -rf database/*.log

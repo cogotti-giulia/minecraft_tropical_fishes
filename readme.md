@@ -1,26 +1,16 @@
 # Minecraft collect tropical fishes
 
-Just a simple PostgreSQL database with python scripts to store minecraft tropical fishes with owner (i'm trying to collecting all of them! There are 2,700 combinations...)
+Just a simple PostgreSQL database with python scripts to store minecraft tropical fishes with minecraft owner (i'm trying to collecting all of them! There are 2,700 combinations...)
 
 ## Instruction
 
-1. create a postgreSQL database
-2. create the file database.ini inside the database folder
+1. install postgreSQL [(download here)](https://www.postgresql.org/download/)
 
-```
-[postgresql]
-host=localhost
-database=db_name
-user=db_user
-password=db_psw
-```
-
-3. run `make build` in order to:
+2. run `make build` in order to:
     - install all the necessary python packages in a virtual environment (you can see them in _requirements.txt_)
-    - create the database 
-    - initialize the database with default values (colors, types and names)
+    - clean log files
 
-4. run `make run` to run the program. It will ask you to select an option, please do it (otherwise why are you using it??).
+3. run `make run` to run the program. It will ask you to select an option, please do it (otherwise why are you using it??).
 
 **WARNING!**
 The _file_ must contain one fish for row. Type, base color and pattern color must be divided by ','. For the 22 unique fish (the real life species) just write the name in a row. If a fish has the same color for base and patter, you can write it only one time.
