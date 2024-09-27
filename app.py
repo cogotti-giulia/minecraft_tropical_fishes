@@ -3,9 +3,7 @@ import time
 import logging
 import numpy as np
 
-import database.config as db
-
-import database.config as conf
+from database.utility_db import check_if_db_exists
 
 from database.utility import insert_data_from_file
 from database.utility import count_variant_user
@@ -20,7 +18,7 @@ logging.basicConfig(filename="app.log", encoding="utf-8", level=logging.ERROR)
 
 if __name__ == "__main__":
 
-    conf.check_if_db_exists()
+    check_if_db_exists()
 
     exit = False
     while not exit:
@@ -63,7 +61,7 @@ if __name__ == "__main__":
 
                             if total is None:
                                 print(
-                                    "\n==> Something went wrong... Pls check if ",
+                                    "\n==> Something went wrong... Please check if ",
                                     username,
                                     "exists",
                                 )
@@ -83,7 +81,7 @@ if __name__ == "__main__":
 
                             if np_variants is None:
                                 print(
-                                    "\n==> Something went wrong... Pls check if ",
+                                    "\n==> Something went wrong... Please check if ",
                                     username,
                                     "exists",
                                 )

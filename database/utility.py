@@ -18,7 +18,11 @@ logging.basicConfig(
 )
 
 
-# insert data
+# TODO: CHECK IF FILE WITH TP FISH LIST EXISTS!
+
+############################### INSERT DATA ###########################
+
+
 def insert_user(username):
     """insert a new minecraft user into users table"""
 
@@ -39,94 +43,6 @@ def insert_user(username):
 
                 # commit the changes to the database
                 conn.commit()
-    except (Exception, psycopg2.DatabaseError) as error:
-        logger.debug(error)
-
-
-# search data
-def search_tropical_fish_variant(
-    is_unique,
-    fish_name=None,
-    fish_type=None,
-    fish_base_color=None,
-    fish_pattern_color=None,
-):
-
-    fishvariant_id = None
-
-    config = load_config()
-
-    try:
-        with psycopg2.connect(**config) as conn:
-            with conn.cursor() as cur:
-                # get id of the tp fish
-
-                if is_unique:
-                    cur.execute(
-                        sql.Q_GET_ID_NAME,
-                        (
-                            fish_name,
-                            fish_name,
-                        ),
-                    )
-
-                    # get the result id
-                    fishname_id = cur.fetchone()[0]
-
-                    cur.execute(
-                        sql.Q_GET_ID_VARIANT_UNIQUE22,
-                        (fishname_id,),
-                    )
-
-                    if cur.rowcount != 0:
-                        fishvariant_id = cur.fetchone()[0]
-
-                else:
-                    cur.execute(
-                        sql.Q_GET_ID_TYPE,
-                        (
-                            fish_type,
-                            fish_type,
-                        ),
-                    )
-
-                    fishtype_id = cur.fetchone()[0]
-
-                    # search for base and pattern color id
-                    cur.execute(
-                        sql.Q_GET_ID_COLOR,
-                        (
-                            fish_base_color,
-                            fish_base_color,
-                        ),
-                    )
-                    basecolor_id = cur.fetchone()[0]
-
-                    cur.execute(
-                        sql.Q_GET_ID_COLOR,
-                        (
-                            fish_pattern_color,
-                            fish_pattern_color,
-                        ),
-                    )
-                    patterncolor_id = cur.fetchone()[0]
-
-                    cur.execute(
-                        sql.Q_GET_ID_VARIANT,
-                        (
-                            fishtype_id,
-                            basecolor_id,
-                            patterncolor_id,
-                        ),
-                    )
-
-                    if cur.rowcount != 0:
-                        fishvariant_id = cur.fetchone()[0]
-
-                # commit the changes to the database
-                conn.commit()
-
-                return fishvariant_id
     except (Exception, psycopg2.DatabaseError) as error:
         logger.debug(error)
 
@@ -264,7 +180,6 @@ def owner_and_tropical_fish(
     return fishvariant_id
 
 
-# TODO: CHECK IF FILE EXISTS!
 def insert_data_from_file(username, filename):
     # check if user already exists
     # otherwise add to db
@@ -342,6 +257,99 @@ def insert_data_from_file(username, filename):
             print(str_r + " " + l.replace("\n", ""))
 
 
+############################### SEARCH DATA ###########################
+
+
+def search_tropical_fish_variant(
+    is_unique,
+    fish_name=None,
+    fish_type=None,
+    fish_base_color=None,
+    fish_pattern_color=None,
+):
+
+    fishvariant_id = None
+
+    config = load_config()
+
+    try:
+        with psycopg2.connect(**config) as conn:
+            with conn.cursor() as cur:
+                # get id of the tp fish
+
+                if is_unique:
+                    cur.execute(
+                        sql.Q_GET_ID_NAME,
+                        (
+                            fish_name,
+                            fish_name,
+                        ),
+                    )
+
+                    # get the result id
+                    fishname_id = cur.fetchone()[0]
+
+                    cur.execute(
+                        sql.Q_GET_ID_VARIANT_UNIQUE22,
+                        (fishname_id,),
+                    )
+
+                    if cur.rowcount != 0:
+                        fishvariant_id = cur.fetchone()[0]
+
+                else:
+                    cur.execute(
+                        sql.Q_GET_ID_TYPE,
+                        (
+                            fish_type,
+                            fish_type,
+                        ),
+                    )
+
+                    fishtype_id = cur.fetchone()[0]
+
+                    # search for base and pattern color id
+                    cur.execute(
+                        sql.Q_GET_ID_COLOR,
+                        (
+                            fish_base_color,
+                            fish_base_color,
+                        ),
+                    )
+                    basecolor_id = cur.fetchone()[0]
+
+                    cur.execute(
+                        sql.Q_GET_ID_COLOR,
+                        (
+                            fish_pattern_color,
+                            fish_pattern_color,
+                        ),
+                    )
+                    patterncolor_id = cur.fetchone()[0]
+
+                    cur.execute(
+                        sql.Q_GET_ID_VARIANT,
+                        (
+                            fishtype_id,
+                            basecolor_id,
+                            patterncolor_id,
+                        ),
+                    )
+
+                    if cur.rowcount != 0:
+                        fishvariant_id = cur.fetchone()[0]
+
+                # commit the changes to the database
+                conn.commit()
+
+                return fishvariant_id
+    except (Exception, psycopg2.DatabaseError) as error:
+        logger.debug(error)
+
+
+############################### GET DATA #############################
+
+
 def get_data_from_db_given_user(username, query):
     config = load_config()
 
@@ -363,9 +371,15 @@ def get_data_from_db_given_user(username, query):
 
 
 def count_variant_user(username):
-    result = get_data_from_db_given_user(username, sql.Q_COUNT_VARIANT_USER)
 
-    return result[0][0]
+    search_user = get_data_from_db_given_user(username, sql.Q_SEARCH_USER)
+
+    if search_user:
+        result = get_data_from_db_given_user(username, sql.Q_COUNT_VARIANT_USER)
+
+        return result[0][0]
+
+    return None
 
 
 def count_name_and_list_user(username):
@@ -401,3 +415,133 @@ def count_name_and_list_user(username):
         return (np_variants, total)
 
     return None, None
+
+
+############################ INSERT DATA ############################
+
+
+def insert_one_color(color_ita, color_eng):
+
+    config = load_config()
+
+    try:
+        with psycopg2.connect(**config) as con:
+            with con.cursor() as cur:
+                cur.execute(
+                    sql.INSERT_COLOR,
+                    (
+                        color_ita,
+                        color_eng,
+                    ),
+                )
+
+                con.commit()
+    except (Exception, psycopg2.DatabaseError) as error:
+        logger.debug(error)
+
+
+def insert_many_color(arr_color_ita, arr_color_eng):
+    config = load_config()
+
+    try:
+        with psycopg2.connect(**config) as con:
+            with con.cursor() as cur:
+
+                for c_ita, c_eng in zip(arr_color_ita, arr_color_eng):
+                    cur.execute(
+                        sql.Q_INSERT_COLOR,
+                        (
+                            c_ita,
+                            c_eng,
+                        ),
+                    )
+
+                con.commit()
+    except (Exception, psycopg2.DatabaseError) as error:
+        logger.debug(error)
+
+
+def insert_one_tropical_fish_type(type_ita, type_eng):
+    """Insert new tropical fish type into the tropical_fishes_type table"""
+
+    config = load_config()
+
+    try:
+        with psycopg2.connect(**config) as con:
+            with con.cursor() as cur:
+                cur.execute(
+                    sql.Q_INSERT_TYPE,
+                    (
+                        type_ita,
+                        type_eng,
+                    ),
+                )
+
+                con.commit()
+    except (Exception, psycopg2.DatabaseError) as error:
+        logger.debug(error)
+
+
+def insert_many_tropical_fish_type(arr_type_ita, arr_type_eng):
+
+    config = load_config()
+
+    try:
+        with psycopg2.connect(**config) as con:
+            with con.cursor() as cur:
+
+                for t_ita, t_eng in zip(arr_type_ita, arr_type_eng):
+                    cur.execute(
+                        sql.Q_INSERT_TYPE,
+                        (
+                            t_ita,
+                            t_eng,
+                        ),
+                    )
+
+                # commit the changes to the database
+                con.commit()
+    except (Exception, psycopg2.DatabaseError) as error:
+        logger.debug(error)
+
+
+def insert_one_tropical_fish_name(name_ita, name_eng):
+    """Insert unique 22 tropical fishes name type into the tropical_fishes_name table"""
+
+    config = load_config()
+
+    try:
+        with psycopg2.connect(**config) as con:
+            with con.cursor() as cur:
+                cur.execute(
+                    sql.Q_INSERT_NAME,
+                    (
+                        name_ita,
+                        name_eng,
+                    ),
+                )
+
+                con.commit()
+    except (Exception, psycopg2.DatabaseError) as error:
+        logger.debug(error)
+
+
+def insert_many_tropical_fish_name(arr_name_ita, arr_name_eng):
+
+    config = load_config()
+
+    try:
+        with psycopg2.connect(**config) as con:
+            with con.cursor() as cur:
+                for n_ita, n_eng in zip(arr_name_ita, arr_name_eng):
+                    cur.execute(
+                        sql.Q_INSERT_NAME,
+                        (
+                            n_ita,
+                            n_eng,
+                        ),
+                    )
+
+                con.commit()
+    except (Exception, psycopg2.DatabaseError) as error:
+        logger.debug(error)
