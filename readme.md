@@ -7,7 +7,7 @@ Just a simple PostgreSQL database with python scripts to store minecraft tropica
 1. install postgreSQL [(download here)](https://www.postgresql.org/download/)
 
 2. run `make run` to run the program. 
-    - install all the necessary python packages in a virtual environment (you can see them in _requirements.txt_)
+    - it will install all the necessary python packages in a virtual environment (you can see them in _requirements.txt_)
     - _[first execution]_ it will ask you to write the database configuration (stored in database/database.ini file) to create the database. It will then proceed as in the next executions step.
     - _[next executions]_ it will ask you to select an option, please do it (otherwise why are you using it??).
 
