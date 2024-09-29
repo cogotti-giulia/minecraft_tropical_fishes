@@ -6,8 +6,10 @@ import numpy as np
 
 import database.queries as sql
 
+from os.path import exists
 from database.config import load_config
 
+from colorama import init, Style, Fore
 
 logger = logging.getLogger(__name__)
 
@@ -17,8 +19,7 @@ logging.basicConfig(
     level=logging.DEBUG,
 )
 
-
-# TODO: CHECK IF FILE WITH TP FISH LIST EXISTS!
+# TODO: add something like getting more statistic
 
 ############################### INSERT DATA ###########################
 
@@ -181,80 +182,92 @@ def owner_and_tropical_fish(
 
 
 def insert_data_from_file(username, filename):
-    # check if user already exists
-    # otherwise add to db
-    insert_user(username)
+    init(autoreset=True)
 
-    r = 0
-    bad_lines = list()
+    if not exists(filename):
+        msg = "*** Warning! The file " + filename + " doesn't exists.***"
+        print(Style.BRIGHT + Fore.RED + msg)
 
-    with open(filename, "r") as file:
-        for line in file:
-            r = r + 1
+    else:
+        # check if user already exists
+        # otherwise add to db
+        insert_user(username)
 
-            line_no_eol = line.replace("\n", "")  # to remove newlines '\n'
-            words = line_no_eol.split(",")  # split line on '-'
-            # print(len(words))
-            # print(words)
-
-            if len(words) == 1:  # unique fishes
-                ris = owner_and_tropical_fish(True, username, words[0].lower())
-
-                if ris is None:
-                    bad_lines.append(line)
-
-            elif len(words) == 2:  # fish with same base and patter color
-                # words.append(words[-1])
-                ris = owner_and_tropical_fish(
-                    False,
-                    username,
-                    None,
-                    words[0].lower(),
-                    words[1].lower(),
-                    words[1].lower(),
-                )
-
-                if ris is None:
-                    bad_lines.append(line)
-
-            elif len(words) == 3:  # default fishing name
-                ris = owner_and_tropical_fish(
-                    False,
-                    username,
-                    None,
-                    words[0].lower(),
-                    words[1].lower(),
-                    words[2].lower(),
-                )
-                if ris is None:
-                    bad_lines.append(line)
-
-            else:
-                logger.error(
-                    "*** Skipping row {}. ***\nFile is bad formatted.\nPlease check your file.".format(
-                        r
-                    )
-                )
-
-    open(filename, "w").close()  # delete file
-
-    if bad_lines:
-        # delete all rows except the bad formattend (also print it for user)
-        with open(filename, "r+") as file:
-            for l in bad_lines[:-1]:
-                file.write(l)
-
-            file.write(bad_lines[-1].replace("\n", ""))
-            file.truncate()
-
-        print(
-            "==> Something went wrong! Please fix your grammar on the text file, then try again!\nList of wrong lines:"
-        )
         r = 0
-        for l in bad_lines:
-            r = r + 1
-            str_r = str(r)
-            print(str_r + " " + l.replace("\n", ""))
+        bad_lines = list()
+
+        with open(filename, "r") as file:
+            for line in file:
+                r = r + 1
+
+                line_no_eol = line.replace("\n", "")  # to remove newlines '\n'
+                words = line_no_eol.split(",")  # split line on '-'
+                # print(len(words))
+                # print(words)
+
+                if len(words) == 1:  # unique fishes
+                    ris = owner_and_tropical_fish(True, username, words[0].lower())
+
+                    if ris is None:
+                        bad_lines.append(line)
+
+                elif len(words) == 2:  # fish with same base and patter color
+                    # words.append(words[-1])
+                    ris = owner_and_tropical_fish(
+                        False,
+                        username,
+                        None,
+                        words[0].lower(),
+                        words[1].lower(),
+                        words[1].lower(),
+                    )
+
+                    if ris is None:
+                        bad_lines.append(line)
+
+                elif len(words) == 3:  # default fishing name
+                    ris = owner_and_tropical_fish(
+                        False,
+                        username,
+                        None,
+                        words[0].lower(),
+                        words[1].lower(),
+                        words[2].lower(),
+                    )
+                    if ris is None:
+                        bad_lines.append(line)
+
+                else:
+                    logger.error(
+                        "*** Skipping row {}. ***\nFile is bad formatted.\nPlease check your file.".format(
+                            r
+                        )
+                    )
+
+        open(filename, "w").close()  # delete file
+
+        if bad_lines:
+            # delete all rows except the bad formattend (also print it for user)
+            with open(filename, "r+") as file:
+                for l in bad_lines[:-1]:
+                    file.write(l)
+
+                file.write(bad_lines[-1].replace("\n", ""))
+                file.truncate()
+
+            msg = "*** Something went wrong! Please fix your grammar on the text file, then try again! ***\n"
+            print(Style.BRIGHT + Fore.RED + msg)
+
+            print(Style.NORMAL + Fore.RED + "All tropical fishes are now stored in the database, except for:")
+            r = 0
+            for l in bad_lines:
+                r = r + 1
+                str_r = str(r)
+                print(Style.DIM + Fore.RED + str_r + Style.RESET_ALL + " " + l.replace("\n", ""))
+        else:
+            msg = "\n*** Everything went well, all tropical fishes are now stored in the database! ***\n"
+            print(Style.DIM + Fore.WHITE + msg)
+
 
 
 ############################### SEARCH DATA ###########################

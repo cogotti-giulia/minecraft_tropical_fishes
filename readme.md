@@ -6,11 +6,10 @@ Just a simple PostgreSQL database with python scripts to store minecraft tropica
 
 1. install postgreSQL [(download here)](https://www.postgresql.org/download/)
 
-2. run `make build` in order to:
+2. run `make run` to run the program. 
     - install all the necessary python packages in a virtual environment (you can see them in _requirements.txt_)
-    - clean log files
-
-3. run `make run` to run the program. It will ask you to select an option, please do it (otherwise why are you using it??).
+    - _[first execution]_ it will ask you to write the database configuration (stored in database/database.ini file) to create the database. It will then proceed as in the next executions step.
+    - _[next executions]_ it will ask you to select an option, please do it (otherwise why are you using it??).
 
 **WARNING!**
 The _file_ must contain one fish for row. Type, base color and pattern color must be divided by ','. For the 22 unique fish (the real life species) just write the name in a row. If a fish has the same color for base and patter, you can write it only one time.

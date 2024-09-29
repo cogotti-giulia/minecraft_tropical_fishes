@@ -6,7 +6,7 @@ import pandas as pd
 import psycopg2
 import psycopg2.sql as sql
 
-import database.utility as utils
+import database.utility_interact_db as utils
 from configparser import ConfigParser
 
 from database.config import load_config
@@ -19,7 +19,11 @@ from database.queries import Q_INSERT_COLOR
 from database.queries import Q_INSERT_TYPE
 from database.queries import Q_INSERT_NAME
 
+from colorama import init, Style, Fore
+
+
 # TODO: FIX GRANT PERMISSION ON CRATED USER (now it's superuser, need to find a better way to grant only necessary privileges!) :/
+# TODO: ADD INTO THE DATABASE TYPE AND COLOR OF THE 22 REAL LIFE SPECIES
 
 logger = logging.getLogger(__name__)
 
@@ -74,12 +78,13 @@ def create_user_role(db_user, db_psw):
 
             con.commit()
         except (Exception, psycopg2.DatabaseError) as error:
-            print(error)
+            logging.debug(error)
 
 
 # create database getting user config
 def create_database(config):
-
+    init(autoreset=True)
+    
     db_name = config.get("database")
     db_user = config.get("user")
     db_psw = config.get("password")
@@ -121,8 +126,10 @@ def create_database(config):
 
             cur.execute(sql.SQL("CREATE DATABASE {0}").format(sql.Identifier(db_name)))
             con.commit()
-            print("\n*** Successfully connected to the database ***\n")
 
+            msg = "\n*** Successfully connected to the database ***\n"
+            print(Style.DIM + Fore.WHITE + msg)
+       
         except (Exception, psycopg2.DatabaseError) as error:
             logging.debug(error)
 
